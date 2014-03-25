@@ -46,6 +46,7 @@ class Executor
     return nil if @tasks.size == 0
     @cores.each do |core|
       if(core.tasks.size == 0)
+        #core.tasks.push Simple_task.new(2) 
         core.tasks.push @tasks.pop
       end
     end
