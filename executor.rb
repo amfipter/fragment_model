@@ -38,7 +38,7 @@ class Executor
 
   def print_result_simple()
     @cores.each do |core|
-      puts "ID: #{core.id}     TIME:#{core.log_time}"
+      puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}"
     end
   end
 

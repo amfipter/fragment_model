@@ -1,5 +1,5 @@
 class Core
-  attr_accessor :tasks, :log_time, :id
+  attr_accessor :tasks, :log_time, :id, :count
 
   def initialize(id, active = false)
     @id = id
@@ -9,6 +9,7 @@ class Core
     @timelines.push Timeline.new
     @free_time = nil
     @log_time = 0
+    @count = 0
     nil
   end
 
@@ -45,6 +46,7 @@ class Core
       planning_simple()
       return nil
     end
+    @count += 1
     task = @timelines[0].get_task!()
     @log_time += task.execute_time
     puts "exec #{@id} time: #{task.execute_time}"
