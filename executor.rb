@@ -54,8 +54,9 @@ class Executor
   end
 
   def init_simple()
+    random = Random.new(100500)
     $task_count.times do 
-      @tasks.push Simple_task.new(Random.rand(10..1000))
+      @tasks.push Simple_task.new(random.rand(100..1000))
     end
 
     #debug_task_print()

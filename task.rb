@@ -26,3 +26,14 @@ class Simple_task
     nil
   end
 end
+
+class Method_task < Simple_task
+  attr_reader :method_name
+  def initialize(time, method_name)
+    @execute_time = time
+    @method_name = method_name
+    @time_start = $time
+    @time_end = $time + @execute_time
+    nil
+  end
+end
