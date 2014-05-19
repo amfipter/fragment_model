@@ -29,6 +29,16 @@ class Timeline
     nil
   end
 
+  def can_get_task?()
+    i=0
+    @time.each do |el|
+      i+= 1 if el.class.eql? Task
+    end
+    return true if i < $TASK_PER_CORE
+    false
+  end
+
+
   # def get_time!()
   #   @time.shift
   # end

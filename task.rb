@@ -37,3 +37,22 @@ class Method_task < Simple_task
     nil
   end
 end
+
+class Work_task < Simple_task
+  attr_reader :execute_time, :time_start, :time_end
+end
+
+class Transfer_task
+  attr_reader :execute_time, :time_start, :time_end, :tasks
+  def initialize(dist, task_array)
+    @execute_time = $DISTANCE_KOEF_PER_CORE * dist
+    @tasks = task_array
+    @time_start = nil
+    @time_end = nil
+  end
+
+  def init()
+    @time_start = $time
+    @time_end = $time + @execute_time
+  end
+end
