@@ -5,6 +5,13 @@ module Ai
     net
   end
 
+  def self.create5()
+    net = Ai4r::NeuralNetwork::Backpropagation.new([5, 24, 22, 3])
+    net
+  end
+
+  
+
   def self.train(net)
     30000.times do
       input, output = Simple_ai_tool.gen()
