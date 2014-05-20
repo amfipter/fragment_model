@@ -2,7 +2,7 @@ class Balancer
   def self.diffusion_simple(lcr_status)
     out = 0
     return out if lcr_status[1] < $DIFFUSION_THRESHOLD
-    out = -1 if lcr_status[0] < $DIFFUSION_THRESHOLD
+    return out = -1 if lcr_status[0] < $DIFFUSION_THRESHOLD
     out = 1 if lcr_status[2] < $DIFFUSION_THRESHOLD
     out
   end
@@ -36,7 +36,18 @@ class Balancer
     end
     0
   end
+
+  def self.neuron5(llcrr_status)
+  	out_res = $net5.eval(llcrr_status)
+  	res = Balancer_tools.vector_extract(out_res)
+  	out = -1 if res[0] == 1
+  	out = 0 if res[1] == 1
+  	out = 2 if res[2] == 1
+ 	out
+  end
 end
+
+
 
 module Balancer_tools
   def self.vector_extract(v)

@@ -7,6 +7,7 @@ class Profile
     while(line = file.gets)
       @raw_data.push line.split ' '
     end
+    @raw_data.uniq!
     file.close
     @data = Array.new(@raw_data[0].size)
     @all_data = []
@@ -17,6 +18,7 @@ class Profile
 
   def parse_input()
     @raw_data[0].size.times do |i|
+      print "\rPARSE: #{i}/#{@raw_data[0].size}"
       @data[i] = Array.new
       @raw_data.each do |el|
         j = i + @raw_data[0].size
@@ -26,6 +28,7 @@ class Profile
         @data[i].push (el+el+el)[j-2..j+2]
       end
     end
+    print "\r"
     @data.each {|el| @all_data += el}
   end
 

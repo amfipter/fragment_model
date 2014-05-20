@@ -92,6 +92,7 @@ class Core
     #puts "balance" #if $debug
     #diffusion_balance()
     simple_neuron_balance()
+    #neuron5_balance()
     nil
   end
 
@@ -108,6 +109,13 @@ class Core
 
   def simple_neuron_balance()
     advice = Balancer.simple_neuron(@llcrr_status)
+    return nil if advice == 0
+    create_transfer(advice)
+    nil
+  end
+
+  def neuron5_balance()
+    advice = Balancer.neuron5(@llcrr_status)
     return nil if advice == 0
     create_transfer(advice)
     nil
