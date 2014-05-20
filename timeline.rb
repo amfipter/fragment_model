@@ -38,6 +38,16 @@ class Timeline
     false
   end
 
+  def have_feed_task?()
+    out = false
+    @time.values.each do |task|
+      if(task.class.eql? Method_task)
+        out = true if task.method_name.eql? "feed"
+      end
+    end
+    out
+  end
+
 
   # def get_time!()
   #   @time.shift

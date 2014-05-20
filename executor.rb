@@ -4,6 +4,7 @@ class Executor
     @tasks = nil
     $feed = Feed.new(100500, nil, task_count, $min_diff, $max_diff)
     cores_count.times {|i| @cores.push Core.new(i)}
+    $comm = Comm.new(@cores)
     nil
   end
 

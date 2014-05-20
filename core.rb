@@ -10,16 +10,41 @@ class Core
     @free_time = nil
     @log_time = 0
     @count = 0
+
+    @data_timeline = Timeline.new
+    @transfer_timeline = Timeline.new
+    @service_timeine = Timeline.new
+    @lr_state = Array.new                 #left-right state of cores. Diffusion balance
+    @llcrr_state = Array.new              #left-left-center-right-right state. Neuron balance
     nil
   end
 
-  # def get_time()
-  #   time = -1
-  #   time = @main_time.get_time() unless @main_time.get_time().nil?
-  #   t = @balance_time.get_time() unless @balance_time.get_time().nil?
-  #   time = t if t < time
-  #   time
-  # end
+  def init()
+    if (active)
+      $TASK_CAPACITY_PER_CORE.times do
+        if($feed.task?)
+          @tasks.push $feed.get_task()
+        end
+      end
+    end
+  end
+
+  def feed()
+    if (active)
+      ($TASK_CAPACITY_PER_CORE - @tasks.size).times do
+        if($feed.task?)
+          @tasks.push $feed.get_task
+        end
+      end
+    end
+  end
+
+  def gen_feed_task()
+    task = Method_task.new($FEED_REQEST_TIME, "feed")
+    task
+  end
+
+
 
   #initialize timeline (consequences of passive execution)
   def init_timeline_simple()
@@ -67,5 +92,5 @@ class Core
 
 
 
-  
+
 end

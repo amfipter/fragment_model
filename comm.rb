@@ -21,4 +21,12 @@ class Comm
   	out = [ll, l, c, r, rr]
   	out
   end
+
+  def lr_status(id)
+  	l = @data[(id-1) % @cores_count]
+  	r = @data[(id+1) % @cores_count]
+  	out = [l, r]
+  	out
+  end
+
 end

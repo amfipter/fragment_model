@@ -18,4 +18,9 @@ class Feed
   def get_task()
   	@tasks.pop
   end
+
+  def task?()
+  	return true if @tasks.size > 0
+  	false
+  end
 end
