@@ -11,6 +11,7 @@ class Core
     @free_time = nil
     @log_time = 0
     @count = 0
+    @lcr_new = false
 
     @data_timeline = Timeline.new
     @transfer_timeline = Timeline.new
@@ -18,6 +19,11 @@ class Core
     @lcr_status = [0, 0, 0]                #left-right state of cores. Diffusion balance
     @llcrr_status = [0, 0, 0, 0, 0]              #left-left-center-right-right state. Neuron balance
     nil
+  end
+
+  def empty?()
+    return true if (@tasks.size == 0 and !running_data_task?() and @data_timeline.size == 0)
+    false
   end
 
   def init()
@@ -32,6 +38,7 @@ class Core
   end
 
   def feed()
+    puts "feed" if $debug
     if (active)
       ($TASK_CAPACITY_PER_CORE - @tasks.size).times do
         if($feed.task?)
@@ -49,6 +56,7 @@ class Core
   def gen_lcr_update_task()
     puts "gen_lcr_update_task" if $debug
     task = Method_task.new($LCR_STATUS_REQUEST_TIME, "lcr_update")
+    puts task.to_f if $debug
     task
   end
 
@@ -71,12 +79,16 @@ class Core
   end
 
   def balance()
+    #puts "balance" #if $debug
     diffusion_balance()
     nil
   end
 
   def diffusion_balance()
-    advice = Balancer.diffusion_simple(lcr_status)
+    advice = Balancer.diffusion_simple(@lcr_status)
+    #puts advice
+    #puts @lcr_status.to_s
+    return nil unless @lcr_new
     return nil if advice == 0
     package = Array.new
     $TRANSFER_PACKAGE_CAPACITY.times do 
@@ -84,6 +96,7 @@ class Core
     end
     task = Transfer_task.new(1, package)
     $comm.send_task_package(@id, advice, task)
+    @lcr_new = false
     nil
   end
 
@@ -99,7 +112,7 @@ class Core
   def exec()
     puts "exec" if $debug
     if(time_to_start_job?())
-      puts "start job"
+      puts "start job" if $debug
       case $time 
       when @transfer_timeline.get_time()
         exec_transfer()
@@ -110,7 +123,10 @@ class Core
       end
     else
       @running_tasks.each do |task|
-        complete_task(task) if task.time_end == $time
+        if(task.time_end == $time)
+          complete_task(task)
+          @running_tasks.delete task
+        end
       end
     end
 
@@ -120,30 +136,30 @@ class Core
 
   def planning()
     puts "planning" if $debug
-    unless(@service_timeline.have_feed_task?())
+    unless(@service_timeline.have_feed_task?() or running_feed_task?())
       @service_timeline.add_event(gen_feed_task())
     end
 
-    unless(@service_timeline.have_balance_task?())
+    unless(@service_timeline.have_balance_task?() or running_balance_task?())
       @service_timeline.add_event(gen_balance_task())
     end
 
-    unless(@service_timeline.have_lcr_update_task?())
+    unless(@service_timeline.have_lcr_update_task?() or running_lcr_update_task?())
       @service_timeline.add_event(gen_lcr_update_task())
     end
 
-    unless(@service_timeline.have_llcrr_update_task?())
+    unless(@service_timeline.have_llcrr_update_task?() or running_llcrr_update_task?())
       @service_timeline.add_event(gen_llcrr_update_task())
     end
 
     if(@data_timeline.size < $CORE_TASK_BUFFER)
-      @data_timeline.add_event(@tasks.pop) if @tasks.size > 0
+      @data_timeline.add_event(@tasks.pop) if (@tasks.size > 0 and !running_data_task?())
     end
   end
 
 
   def complete_task(task)
-    puts "complete_task"
+    puts "complete_task" if $debug
     case task
     when Work_task
       complete_data_task(task)
@@ -155,12 +171,14 @@ class Core
   end
 
   def complete_transfer_task(task)
+    puts "complete_transfer_task" if $debug
     data = task.tasks
     @tasks += data
     nil
   end
 
   def complete_service_task(task)
+    puts "complete_service_task" if $debug
     case task.method_name
     when "feed"
       feed()
@@ -174,8 +192,10 @@ class Core
   end
 
   def complete_data_task(task)
+    #puts "complete_data_task" if $debug
     @log_time += task.execute_time
-    puts "exec #{@id} time: #{task.execute_time}"
+    @count += 1
+    #puts "exec #{@id} time: #{task.execute_time}"
     nil
   end
 
@@ -201,12 +221,15 @@ class Core
   end
 
   def lcr_status_update()
-    lcr_status = $comm.lcr_status(@id)
+    puts "lcr_status_update" if $debug
+    @lcr_status = $comm.lcr_status(@id)
+    @lcr_new = true
     nil
   end
 
   def llcrr_status_update()
-    llcrr_status = $comm.llcrr_status(@id)
+    puts "llcrr_status_update" if $debug
+    @llcrr_status = $comm.llcrr_status(@id)
     nil
   end
 
@@ -262,6 +285,58 @@ class Core
     return true if [transfer, service, data].min == $time
     false
   end
+
+  def running_feed_task?()
+    out = false
+    @running_tasks.each do |task|
+      if(task.class.eql? Method_task and task.method_name.eql? "feed")
+        out = true
+      end
+    end
+    out
+  end
+
+  def running_balance_task?()
+    out = false
+    @running_tasks.each do |task|
+      if(task.class.eql? Method_task and task.method_name.eql? "balance")
+        out = true
+      end
+    end
+    out
+  end
+
+  def running_lcr_update_task?()
+    out = false
+    @running_tasks.each do |task|
+      if(task.class.eql? Method_task and task.method_name.eql? "lcr_update")
+        out = true
+      end
+    end
+    out
+  end
+
+  def running_llcrr_update_task?()
+    out = false
+    @running_tasks.each do |task|
+      if(task.class.eql? Method_task and task.method_name.eql? "llcrr_update")
+        out = true
+      end
+    end
+    out
+  end
+
+  def running_data_task?()
+    out = false
+    @running_tasks.each do |task|
+      if(task.class.eql? Work_task)
+        out = true
+      end
+    end
+    out
+  end
+
+
 
 
 end

@@ -24,4 +24,8 @@ class Feed
   	return true if @tasks.size > 0
   	false
   end
+
+  def size()
+  	@tasks.size
+  end
 end

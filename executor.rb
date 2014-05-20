@@ -26,11 +26,15 @@ class Executor
       if(nearest == $int_max)
         return nil
       end
-      puts "#{$time} #{nearest}"
-      time = nearest
+      #puts "#{$time} #{nearest}"
+      $time = nearest
       target_core.exec()
-      #exit()
-      #sleep 1
+      work = false
+      @cores.each {|core| work = true unless core.empty?()}
+      work = true if $feed.size > 0
+      break unless work
+      $comm.update()
+      #sleep 1/5
     end
     nil
   end

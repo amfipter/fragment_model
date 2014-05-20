@@ -25,6 +25,10 @@ class Simple_task
     @time_end = time + @execute_time
     nil
   end
+
+  def to_f()
+    "class: #{self.class}\texec_time:#{@execute_time}\tstart:#{@time_start}\tend:#{@time_end}"
+  end
 end
 
 class Method_task < Simple_task
@@ -54,5 +58,11 @@ class Transfer_task
   def init()
     @time_start = $time
     @time_end = $time + @execute_time
+  end
+
+  def reinit(time = $time)
+    @time_start = time
+    @time_end = time + @execute_time
+    nil
   end
 end

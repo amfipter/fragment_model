@@ -9,6 +9,7 @@ class Timeline
     unless(@time_keys_cache[-1].nil?)
       time = @time_keys_cache[-1]
     end
+    puts task.to_f if $debug
     task.reinit(time)
     @time[time] = task
     update_cache()

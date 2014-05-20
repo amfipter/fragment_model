@@ -9,6 +9,7 @@ class Comm
     @cores.each do |core|
       @data[core.id] = core.tasks.size
     end
+    #puts @data
     nil
   end
 
@@ -27,6 +28,7 @@ class Comm
   	c = @data[id]
   	r = @data[(id+1) % @cores_count]
   	out = [l, c, r]
+  	#puts "=>> " + out.to_s
   	out
   end
 
