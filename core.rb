@@ -53,6 +53,16 @@ class Core
     nil
   end
 
+  def create_transfer(target_diff)
+    package = Array.new
+    $TRANSFER_PACKAGE_CAPACITY.times do 
+      t = @tasks.pop
+      package.push t unless t.nil?
+    end
+    task = Transfer_task.new(1, package)
+    $comm.send_task_package(@id, target_diff, task)
+  end
+
   def gen_lcr_update_task()
     puts "gen_lcr_update_task" if $debug
     task = Method_task.new($LCR_STATUS_REQUEST_TIME, "lcr_update")
@@ -80,7 +90,8 @@ class Core
 
   def balance()
     #puts "balance" #if $debug
-    diffusion_balance()
+    #diffusion_balance()
+    simple_neuron_balance()
     nil
   end
 
@@ -90,13 +101,15 @@ class Core
     #puts @lcr_status.to_s
     return nil unless @lcr_new
     return nil if advice == 0
-    package = Array.new
-    $TRANSFER_PACKAGE_CAPACITY.times do 
-      package.push @tasks.pop
-    end
-    task = Transfer_task.new(1, package)
-    $comm.send_task_package(@id, advice, task)
+    create_transfer(advice)
     @lcr_new = false
+    nil
+  end
+
+  def simple_neuron_balance()
+    advice = Balancer.simple_neuron(@llcrr_status)
+    return nil if advice == 0
+    create_transfer(advice)
     nil
   end
 
@@ -153,7 +166,7 @@ class Core
     end
 
     if(@data_timeline.size < $CORE_TASK_BUFFER)
-      @data_timeline.add_event(@tasks.pop) if (@tasks.size > 0 and !running_data_task?())
+      @data_timeline.add_event(@tasks.pop) if (@tasks.size > 0 and !running_data_task?() and @tasks.size > 0)
     end
   end
 

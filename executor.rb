@@ -6,14 +6,18 @@ class Executor
     cores_count.times {|i| @cores.push Core.new(i)}
     set_active_cores()
     $comm = Comm.new(@cores)
+    @profile = Array.new
+    @last = Array.new
     nil
   end
 
   def start()
     #puts $feed.task?
+    puts "executor"
     @cores.each {|core| core.init()}
     while(true) do 
       #cores_debug_print()
+      print "\r#{$task_count-$feed.size}/#{$task_count}"
       nearest = $int_max
       target_core = nil
       @cores.each do |core|
@@ -34,14 +38,19 @@ class Executor
       work = true if $feed.size > 0
       break unless work
       $comm.update()
+
+      capture_profile()
       #sleep 1/5
     end
+    puts "\r#{$task_count}/#{$task_count}"
+    write_profile()
     nil
   end
 
   def start_simple()
     while(true) do
         #puts @tasks.size
+
         check_cores_state_simple()
         nearest = $int_max
         target_core = nil
@@ -66,9 +75,12 @@ class Executor
     end
 
     def print_result_simple()
+      all_task = 0
       @cores.each do |core|
+        all_task += core.count
         puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}"
       end
+      puts "ALL TASK: #{all_task}"
     end
 
     def check_cores_state_simple()
@@ -112,8 +124,25 @@ class Executor
     end
 
     def set_active_cores()
-      @cores[0].active = true
+      @cores[$cores_count/2].active = true
       nil
     end
+
+    def capture_profile()
+      current = Array.new
+      @cores.each {|core| current.push core.tasks.size}
+      return nil if current.eql? @last
+      @profile.push current
+      @last = current
+    end
+
+    def write_profile()
+      f = File.new("profile", "w")
+      @profile.each do |line|
+        f.puts line.join ' '
+      end
+      f.close
+    end
+
 
   end
