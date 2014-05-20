@@ -6,6 +6,7 @@ class Core
     @active = active
     @timelines = Array.new
     @tasks = Array.new
+    @running_tasks = Array.new
     @timelines.push Timeline.new
     @free_time = nil
     @log_time = 0
@@ -13,9 +14,9 @@ class Core
 
     @data_timeline = Timeline.new
     @transfer_timeline = Timeline.new
-    @service_timeine = Timeline.new
-    @lr_state = Array.new                 #left-right state of cores. Diffusion balance
-    @llcrr_state = Array.new              #left-left-center-right-right state. Neuron balance
+    @service_timeline = Timeline.new
+    @lcr_status = [0, 0, 0]                #left-right state of cores. Diffusion balance
+    @llcrr_status = [0, 0, 0, 0, 0]              #left-left-center-right-right state. Neuron balance
     nil
   end
 
@@ -39,12 +40,140 @@ class Core
     end
   end
 
+  def accept_transfer(task)
+    @transfer_timeline.add_event(task)
+    nil
+  end
+
+  def gen_lcr_update_task()
+    task = Method_task.new($LCR_STATUS_REQUEST_TIME, "lcr_update")
+    task
+  end
+
+  def gen_llcrr_update_task()
+    task = Method_task.new($LLCRR_STATUS_REQUEST_TIME, "llcrr_update")
+    task
+  end
+
   def gen_feed_task()
     task = Method_task.new($FEED_REQEST_TIME, "feed")
     task
   end
 
+  def gen_balance_task()
+    task = Method_task.new($DIFFUSION_BALANCE_TIME, "balance")
+    task
+  end
 
+  def balance()
+    diffusion_balance()
+    nil
+  end
+
+  def diffusion_balance()
+    advice = Balancer.diffusion_simple(lcr_status)
+    return nil if advice == 0
+    package = Array.new
+    $TRANSFER_PACKAGE_CAPACITY.times do 
+      package.push @tasks.pop
+    end
+    task = Transfer_task.new(1, package)
+    $comm.send_task_package(@id, advice, task)
+    nil
+  end
+
+  def get_time()
+    transfer = @transfer_timeline.get_time()
+    service = @service_timeine.get_time()
+    data = @data_timeline.get_time()
+    running_tasks_time = Array.new
+    @running_tasks.each {|task| running_tasks_time.push task.time_end}
+    [transfer, service, data, running_tasks_time.min].min
+  end
+
+  def exec()
+    if(time_to_start_job?())
+      case $time 
+      when @transfer_timeline.get_time()
+        exec_transfer()
+      when @service_timeline.get_time()
+        exec_service()
+      when @data_timeline.get_time()
+        exec_data()
+      end
+    else
+      @running_tasks.each do |task|
+        complete_task(task) if task.time_end == $time
+      end
+    end
+
+    planning()
+
+  end
+
+  def complete_task(task)
+    case task
+    when Work_task
+      complete_data_task(task)
+    when Transfer_task
+      complete_transfer_task(task)
+    when Method_task
+      complete_service_task(task)
+    end
+  end
+
+  def complete_transfer_task(task)
+    data = task.tasks
+    @tasks += data
+    nil
+  end
+
+  def complete_service_task(task)
+    case task.method_name
+    when "feed"
+      feed()
+    when "balance"
+      balance()
+    when "lcr_update"
+      lcr_status_update()
+    when "llcrr_update"
+      llcrr_status_update()
+    end
+  end
+
+  def complete_data_task(task)
+    @log_time += task.execute_time
+    puts "exec #{@id} time: #{task.execute_time}"
+    nil
+  end
+
+  def exec_transfer()
+    task = @transfer_timeline.get_task!()
+    @running_tasks.push task
+    nil
+  end
+
+  def exec_service()
+    task = @service_timeline.get_task!()
+    @running_tasks.push task
+    nil
+  end
+
+  def exec_data()
+    task = @data_timeline.get_task!()
+    @running_tasks.push task
+    nil
+  end
+
+  def lcr_status_update()
+    lcr_status = $comm.lcr_status(@id)
+    nil
+  end
+
+  def llcrr_status_update()
+    llcrr_status = $comm.llcrr_status(@id)
+    nil
+  end
 
   #initialize timeline (consequences of passive execution)
   def init_timeline_simple()
@@ -63,6 +192,7 @@ class Core
       return @timelines[0].get_time()
     end
   end
+
 
 
   def execute_simple()
@@ -90,7 +220,13 @@ class Core
     nil
   end
 
-
+  def time_to_start_job?()
+    transfer = @transfer_timeline.get_time()
+    service = @service_timeine.get_time()
+    data = @data_timeline.get_time()
+    return true if [transfer, service, data].min == $time
+    false
+  end
 
 
 end

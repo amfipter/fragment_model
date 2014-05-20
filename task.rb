@@ -20,9 +20,9 @@ class Simple_task
     @execute_time.to_s
   end
 
-  def reinit()
-    @time_start = $time
-    @time_end = $time + @execute_time
+  def reinit(time = $time)
+    @time_start = time
+    @time_end = time + @execute_time
     nil
   end
 end

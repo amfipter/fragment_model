@@ -22,11 +22,18 @@ class Comm
   	out
   end
 
-  def lr_status(id)
+  def lcr_status(id)
   	l = @data[(id-1) % @cores_count]
+  	c = @data[id]
   	r = @data[(id+1) % @cores_count]
-  	out = [l, r]
+  	out = [l, c, r]
   	out
   end
+
+  def send_task_package(id, target_diff, task)
+  	@cores[(id + target_diff) % @cores_count].accept_transfer(task)
+  	nil
+  end
+
 
 end

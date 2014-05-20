@@ -5,8 +5,12 @@ class Timeline
   end
 
   def add_event(task)
-    task.reinit
-    @time[$time] = task
+    time = $time
+    unless(@time_keys_cache[-1].nil?)
+      time = @time_keys_cache[-1]
+    end
+    task.reinit(time)
+    @time[time] = task
     update_cache()
     nil
   end
