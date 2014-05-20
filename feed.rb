@@ -6,12 +6,13 @@ class Feed
     @max_diff = max_diff
     @min_diff = min_diff
     @tasks = Array.new
+    simple_gen()
   end
 
   def simple_gen()
     r = Random.new(@seed)
     @size.times do
-      @tasks.push(Work_task.new(r.rand(@min_diff..@max_diff)))
+      @tasks.push(Work_task.new(@min_diff + r.rand(@max_diff-@min_diff)))
     end
   end
 

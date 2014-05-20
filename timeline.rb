@@ -1,7 +1,7 @@
 class Timeline
   def initialize()
     @time = Hash.new
-    @time_keys_cache = nil
+    @time_keys_cache = []
   end
 
   def add_event(task)
@@ -18,6 +18,10 @@ class Timeline
   def get_time()
     return @time_keys_cache[0] unless @time_keys_cache[0].nil?
     $int_max
+  end
+
+  def size()
+    @time.size
   end
 
   #get nearest task and remove it from task queue
@@ -47,6 +51,36 @@ class Timeline
     @time.values.each do |task|
       if(task.class.eql? Method_task)
         out = true if task.method_name.eql? "feed"
+      end
+    end
+    out
+  end
+
+  def have_lcr_update_task?()
+    out = false
+    @time.values.each do |task|
+      if(task.class.eql? Method_task)
+        out = true if task.method_name.eql? "lcr_update"
+      end
+    end
+    out
+  end
+
+  def have_llcrr_update_task?()
+    out = false
+    @time.values.each do |task|
+      if(task.class.eql? Method_task)
+        out = true if task.method_name.eql? "llcrr_update"
+      end
+    end
+    out
+  end
+
+  def have_balance_task?()
+    out = false
+    @time.values.each do |task|
+      if(task.class.eql? Method_task)
+        out = true if task.method_name.eql? "balance"
       end
     end
     out

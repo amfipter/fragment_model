@@ -1,5 +1,5 @@
 class Core
-  attr_accessor :tasks, :log_time, :id, :count
+  attr_accessor :tasks, :log_time, :id, :count, :active
 
   def initialize(id, active = false)
     @id = id
@@ -28,6 +28,7 @@ class Core
         end
       end
     end
+    planning()
   end
 
   def feed()
@@ -46,21 +47,25 @@ class Core
   end
 
   def gen_lcr_update_task()
+    puts "gen_lcr_update_task" if $debug
     task = Method_task.new($LCR_STATUS_REQUEST_TIME, "lcr_update")
     task
   end
 
   def gen_llcrr_update_task()
+    puts "gen_llcrr_update_task" if $debug
     task = Method_task.new($LLCRR_STATUS_REQUEST_TIME, "llcrr_update")
     task
   end
 
   def gen_feed_task()
+    puts "gen_feed_task" if $debug
     task = Method_task.new($FEED_REQEST_TIME, "feed")
     task
   end
 
   def gen_balance_task()
+    puts "gen_balance_task" if $debug
     task = Method_task.new($DIFFUSION_BALANCE_TIME, "balance")
     task
   end
@@ -84,15 +89,17 @@ class Core
 
   def get_time()
     transfer = @transfer_timeline.get_time()
-    service = @service_timeine.get_time()
+    service = @service_timeline.get_time()
     data = @data_timeline.get_time()
-    running_tasks_time = Array.new
+    running_tasks_time = [$int_max]
     @running_tasks.each {|task| running_tasks_time.push task.time_end}
     [transfer, service, data, running_tasks_time.min].min
   end
 
   def exec()
+    puts "exec" if $debug
     if(time_to_start_job?())
+      puts "start job"
       case $time 
       when @transfer_timeline.get_time()
         exec_transfer()
@@ -111,7 +118,32 @@ class Core
 
   end
 
+  def planning()
+    puts "planning" if $debug
+    unless(@service_timeline.have_feed_task?())
+      @service_timeline.add_event(gen_feed_task())
+    end
+
+    unless(@service_timeline.have_balance_task?())
+      @service_timeline.add_event(gen_balance_task())
+    end
+
+    unless(@service_timeline.have_lcr_update_task?())
+      @service_timeline.add_event(gen_lcr_update_task())
+    end
+
+    unless(@service_timeline.have_llcrr_update_task?())
+      @service_timeline.add_event(gen_llcrr_update_task())
+    end
+
+    if(@data_timeline.size < $CORE_TASK_BUFFER)
+      @data_timeline.add_event(@tasks.pop) if @tasks.size > 0
+    end
+  end
+
+
   def complete_task(task)
+    puts "complete_task"
     case task
     when Work_task
       complete_data_task(task)
@@ -148,18 +180,21 @@ class Core
   end
 
   def exec_transfer()
+    puts "exec_transfer" if $debug
     task = @transfer_timeline.get_task!()
     @running_tasks.push task
     nil
   end
 
   def exec_service()
+    puts "exec_service" if $debug
     task = @service_timeline.get_task!()
     @running_tasks.push task
     nil
   end
 
   def exec_data()
+    puts "exec_data" if $debug
     task = @data_timeline.get_task!()
     @running_tasks.push task
     nil
@@ -222,7 +257,7 @@ class Core
 
   def time_to_start_job?()
     transfer = @transfer_timeline.get_time()
-    service = @service_timeine.get_time()
+    service = @service_timeline.get_time()
     data = @data_timeline.get_time()
     return true if [transfer, service, data].min == $time
     false
