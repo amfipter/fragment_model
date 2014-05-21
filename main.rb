@@ -12,7 +12,7 @@ require "./comm.rb"
 require "./ai.rb"
 require "./profile.rb"
 
-#$profile = Profile.new
+
 # $profile.debug_print
 # exit
 $time = 0
@@ -21,25 +21,31 @@ $cores_count = ARGV[1].to_i
 $int_max = 2**64
 $debug = nil
 
+$WRITE_PROFILE                  =   false
+$READ_PROFILE                   =   false
+$DIFFUSION_BALANCE              =   true
+$SIMPLE_NEURON_BALANCE          =   false
+$NEURON5_BALANCE                =   false
 
-$TASK_PER_CORE 				= 	1
-$DISTANCE_KOEF_PER_CORE 	= 	10
-$DIFFUSION_THRESHOLD 		= 	15
-$TASK_CAPACITY_PER_CORE 	= 	30
-$FEED_REQEST_TIME 			= 	100
-$DIFFUSION_BALANCE_TIME 	= 	100
-$NEURON_PERC_BALANCE_TIME 	= 	200
-$TRANSFER_PACKAGE_CAPACITY 	= 	5
-$LCR_STATUS_REQUEST_TIME 	= 	100
-$LLCRR_STATUS_REQUEST_TIME 	=	150
-$CORE_TASK_BUFFER 			=	1
-$MIN_TASK_DIFF				=	100
-$MAX_TASK_DIFF				=	1000
+$TASK_PER_CORE 			          	= 	1
+$DISTANCE_KOEF_PER_CORE 	      = 	10
+$DIFFUSION_THRESHOLD 	        	= 	15
+$TASK_CAPACITY_PER_CORE       	= 	30
+$FEED_REQEST_TIME 		          = 	100
+$DIFFUSION_BALANCE_TIME        	= 	100
+$NEURON_PERC_BALANCE_TIME     	= 	100
+$TRANSFER_PACKAGE_CAPACITY    	= 	1
+$LCR_STATUS_REQUEST_TIME      	= 	100
+$LLCRR_STATUS_REQUEST_TIME    	=	  100
+$CORE_TASK_BUFFER 			        =	  1
+$MIN_TASK_DIFF			           	=  	10000
+$MAX_TASK_DIFF			           	=	  100000
 
 $feed = nil
 $net = nil
 $net5 = nil
 
+$profile = Profile.new if $READ_PROFILE
 if(File.exists?("net5_ser"))
   File.open("net5_ser") do |file|
     $net5 = Marshal.load(file)

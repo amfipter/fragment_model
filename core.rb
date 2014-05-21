@@ -84,15 +84,17 @@ class Core
 
   def gen_balance_task()
     puts "gen_balance_task" if $debug
-    task = Method_task.new($DIFFUSION_BALANCE_TIME, "balance")
+    task = Method_task.new($DIFFUSION_BALANCE_TIME, "balance") if $DIFFUSION_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $SIMPLE_NEURON_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $NEURON5_BALANCE
     task
   end
 
   def balance()
     #puts "balance" #if $debug
-    #diffusion_balance()
-    simple_neuron_balance()
-    #neuron5_balance()
+    diffusion_balance() if $DIFFUSION_BALANCE
+    simple_neuron_balance() if $SIMPLE_NEURON_BALANCE
+    neuron5_balance() if $NEURON5_BALANCE
     nil
   end
 

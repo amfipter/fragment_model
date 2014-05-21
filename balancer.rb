@@ -2,7 +2,12 @@ class Balancer
   def self.diffusion_simple(lcr_status)
     out = 0
     return out if lcr_status[1] < $DIFFUSION_THRESHOLD
-    return out = -1 if lcr_status[0] < $DIFFUSION_THRESHOLD
+    if(lcr_status[0] < $DIFFUSION_THRESHOLD and lcr_status[2] < $DIFFUSION_THRESHOLD)
+      out = -1 if lcr_status[0] < lcr_status[2]
+      out = 1 if lcr_status[0] >= lcr_status[2]
+      return out
+    end
+    out = -1 if lcr_status[0] < $DIFFUSION_THRESHOLD
     out = 1 if lcr_status[2] < $DIFFUSION_THRESHOLD
     out
   end

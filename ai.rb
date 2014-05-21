@@ -6,7 +6,7 @@ module Ai
   end
 
   def self.create5()
-    net = Ai4r::NeuralNetwork::Backpropagation.new([5, 10, 3])
+    net = Ai4r::NeuralNetwork::Backpropagation.new([5, 10, 10, 3])
     net
   end
 
