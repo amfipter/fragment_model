@@ -76,6 +76,7 @@ class Hybrid_net
     i = 1
     esoinn_train.each do |train|
       print "\r#{i}/#{esoinn_train.size}"
+      puts train.to_s 
       @esoinn.new_data(train)
       i += 1
     end
@@ -105,7 +106,7 @@ class Hybrid_net
     train_set.each do |train|
       v = Array.new
       @prototypes.each do |vector|
-        v.push norm(train, vector)
+        v.push norm(train, vector[1])
       end
       @perc_set.push v
     end
@@ -114,6 +115,8 @@ class Hybrid_net
 
   def norm(e1, e2)
     t = 0.0
+    # puts e1.to_s
+    # puts e2.to_s
     e1.size.times do |i|
       t += (e1[i] - e2[i])**2
     end
@@ -124,7 +127,7 @@ class Hybrid_net
   def eval(vector)
     target_v = Array.new 
     @prototypes.each do |v|
-      target_v.push norm(v, vector)
+      target_v.push norm(v[1], vector)
     end
     out = @perc_net.eval(target_v)
     out

@@ -43,7 +43,7 @@ class Executor
       #sleep 1/5
     end
     puts "\r#{$task_count}/#{$task_count}"
-    #write_profile()
+    write_profile() if $WRITE_PROFILE
     nil
   end
 

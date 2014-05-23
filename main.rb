@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby21
 
 require "ai4r"
+require "colorize"
 require "./executor.rb"
 require "./timeline.rb"
 require "./helper.rb"
@@ -22,10 +23,10 @@ $cores_count = ARGV[1].to_i
 $int_max = 2**64
 $debug = nil
 
-$WRITE_PROFILE                  =   false
+$WRITE_PROFILE                  =   true
 $READ_PROFILE                   =   true
-$DIFFUSION_BALANCE              =   true
-$SIMPLE_NEURON_BALANCE          =   false
+$DIFFUSION_BALANCE              =   false
+$SIMPLE_NEURON_BALANCE          =   true
 $NEURON5_BALANCE                =   false
 $HYBRID_NEURON_BALANCE			=	false
 
@@ -44,6 +45,7 @@ $MIN_TASK_DIFF			       	=  	100
 $MAX_TASK_DIFF	            	=   1000
 
 #ESOINN CONFIG
+$MAX_INT = 2**64
 $MAX_AGE = 100
 $N = 0
 $K = 0
@@ -58,6 +60,18 @@ $net5 = nil
 $hybrid_net = nil
 
 $profile = Profile.new if $READ_PROFILE
+
+if(File.exists?("net_ser"))
+  File.open("net_ser") do |file|
+    $net = Marshal.load(file)
+  end
+else
+  $net = Ai.create()
+  Ai.train($net)
+end
+
+$profile.create_answer_s() if $READ_PROFILE
+
 if(File.exists?("net5_ser"))
   File.open("net5_ser") do |file|
     $net5 = Marshal.load(file)
@@ -76,14 +90,7 @@ else
   Ai.train_hybrid($hybrid_net, $profile.all_data, $profile.all_answer_s)
 end
 
-if(File.exists?("net_ser"))
-  File.open("net_ser") do |file|
-    $net = Marshal.load(file)
-  end
-else
-  $net = Ai.create()
-  Ai.train($net)
-end
+
 
 executor = Executor.new($cores_count, $task_count)
 executor.start

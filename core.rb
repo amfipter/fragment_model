@@ -87,6 +87,7 @@ class Core
     task = Method_task.new($DIFFUSION_BALANCE_TIME, "balance") if $DIFFUSION_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $SIMPLE_NEURON_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $NEURON5_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $HYBRID_NEURON_BALANCE
     task
   end
 
@@ -125,7 +126,7 @@ class Core
   end
 
   def hybrid_esoinn_perc_balance()
-    advice = Balancer.hybrid_esoinn_perc_balance(llcrr_status)
+    advice = Balancer.hybrid_esoinn_perc_balance(@llcrr_status)
     return nil if advice == 0
     create_transfer(advice)
     nil
