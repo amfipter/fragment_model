@@ -95,6 +95,7 @@ class Core
     diffusion_balance() if $DIFFUSION_BALANCE
     simple_neuron_balance() if $SIMPLE_NEURON_BALANCE
     neuron5_balance() if $NEURON5_BALANCE
+    hybrid_esoinn_perc_balance() if $HYBRID_NEURON_BALANCE
     nil
   end
 
@@ -118,6 +119,13 @@ class Core
 
   def neuron5_balance()
     advice = Balancer.neuron5(@llcrr_status)
+    return nil if advice == 0
+    create_transfer(advice)
+    nil
+  end
+
+  def hybrid_esoinn_perc_balance()
+    advice = Balancer.hybrid_esoinn_perc_balance(llcrr_status)
     return nil if advice == 0
     create_transfer(advice)
     nil

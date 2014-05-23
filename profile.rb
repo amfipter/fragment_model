@@ -12,8 +12,10 @@ class Profile
     @data = Array.new(@raw_data[0].size)
     @all_data = []
     @all_answer = []
+    @all_answer_s = Array.new
     parse_input()
     create_answer_d()
+    create_answer_s()
   end
 
   def parse_input()
@@ -30,10 +32,10 @@ class Profile
     end
     print "\r"
     @data.each {|el| @all_data += el}
+    @all_data.uniq!
   end
 
   def create_answer_d()
-    @all_data.uniq!
     @all_data.each do |el|
       el.map! {|i| i.to_f}
       l = Math.sqrt(el[0]**2 + el[1]**2 + el[2]**2)
@@ -52,11 +54,59 @@ class Profile
     end
   end
 
+  def create_answer_s()
+    @all_data.each do |el|
+      el.map! {|i| i.to_f}
+      left = rule_simple(el[0..2])
+      main = rule_simple(el[1..3])
+      right = rule_simple(el[2..4])
+      rule = [0, 0, 0]
+      if(main[2] == 1)
+        if(left[0] == 1)
+          rule[0] = 1
+        elsif (right[0] == 1)
+          rule[2] = 1
+        end
+        if(left[1] == 1 and right[1] == 1)
+          if (left_res[1] < right_res[1])
+            rule[0] = 1
+          elsif (free_r)
+            rule[2] = 1
+          end
+        end
+        if(left[1] == 1 and right[2] == 1)
+          rule[0] = 1
+        elsif (right[1] == 1 and left[2] == 1)
+          rule[2] = 1
+        end
+      end
+      if(rule[0] == 0 and rule[2] == 0)
+      	rule[1] == 1
+      end
+      @all_answer_s.push rule
+    end
+  end
+
   def debug_print()
     @all_data.size.times do |i|
       puts @all_data[i].to_s + ' ' + @all_answer[i].to_s
     end
 
+  end
+
+  def rule_simple(input_data)
+    output_data = Array.new(3)
+    output_data.map! {|i| i = 0}
+
+    if(input_data[1] > $DIFFUSION_THRESHOLD)
+      output_data[2] = 1
+    elsif (input_data[0] > $DIFFUSION_THRESHOLD or input_data[2] > $DIFFUSION_THRESHOLD)
+      output_data[1] = 1
+    else
+      output_data[0] = 1
+    end
+
+    output_data
   end
 
 end

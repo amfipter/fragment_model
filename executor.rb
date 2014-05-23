@@ -43,7 +43,7 @@ class Executor
       #sleep 1/5
     end
     puts "\r#{$task_count}/#{$task_count}"
-    write_profile() if $WRITE_PROFILE
+    #write_profile()
     nil
   end
 
@@ -125,8 +125,6 @@ class Executor
 
     def set_active_cores()
       @cores[$cores_count/2].active = true
-      #@cores[0].active = true
-      #@cores[-1].active = true
       nil
     end
 
