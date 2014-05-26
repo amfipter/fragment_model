@@ -23,12 +23,18 @@ $cores_count = ARGV[1].to_i
 $int_max = 2**64
 $debug = nil
 
+#PROFILE CONFIG
 $WRITE_PROFILE                  =   false
 $READ_PROFILE                   =   true
+
+#BALANCE CONFIG
 $DIFFUSION_BALANCE              =   false
 $SIMPLE_NEURON_BALANCE          =   false
 $NEURON5_BALANCE                =   false
 $HYBRID_NEURON_BALANCE          =   true
+$ESOINN_PREDICTION_BALANCE      =   false
+$SOM_PREDICTION_BALANCE         =   false
+$PERC_PREDICTION_BALANCE        =   false
 
 #CORE CONFIG
 $TASK_PER_CORE 		            =    1
@@ -45,7 +51,7 @@ $CORE_TASK_BUFFER 			    =    1
 $MIN_TASK_DIFF			        =    100
 $MAX_TASK_DIFF	               	=    1000
 
-#PROFILE CONFIG
+#PROFILE PARSE CONFIG
 $VECTOR_SEQ_SIZE = 5
 
 #ESOINN CONFIG

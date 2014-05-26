@@ -61,6 +61,43 @@ class Balancer
     out = 1 if res[2] == 1
     out
   end
+
+  def self.esoinn_prediction_balance(vector4_llcrr_status)
+    predict_llcrr_status = $esoinn_prediction_net.predict_next(vector4_llcrr_status)
+    left = Math.sqrt(
+      predict_llcrr_status[0].to_f**2 +
+      predict_llcrr_status[1].to_f**2 +
+      predict_llcrr_status[2].to_f**2
+    )
+    center = Math.sqrt(
+      predict_llcrr_status[1].to_f**2 +
+      predict_llcrr_status[2].to_f**2 +
+      predict_llcrr_status[3].to_f**2
+    )
+    right = Math.sqrt(
+      predict_llcrr_status[2].to_f**2 +
+      predict_llcrr_status[3].to_f**2 +
+      predict_llcrr_status[4].to_f**2
+    )
+    if(center < left and center < right)
+      return 0
+    end
+
+    if(center > left and center < right)
+      return -1
+    end
+
+    if(center < left and center > right)
+      return 1
+    end
+
+    if(left > right)
+      return 1
+    else
+      return -1
+    end
+    nil
+  end
 end
 
 
