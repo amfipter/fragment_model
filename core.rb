@@ -18,6 +18,7 @@ class Core
     @service_timeline = Timeline.new
     @lcr_status = [0, 0, 0]                #left-right state of cores. Diffusion balance
     @llcrr_status = [0, 0, 0, 0, 0]              #left-left-center-right-right state. Neuron balance
+    @vector4_llcrr_status = Array.new
     nil
   end
 
@@ -88,6 +89,9 @@ class Core
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $SIMPLE_NEURON_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $NEURON5_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $HYBRID_NEURON_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $ESOINN_PREDICTION_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $SOM_PREDICTION_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $PERC_PREDICTION_BALANCE
     task
   end
 
@@ -97,6 +101,9 @@ class Core
     simple_neuron_balance() if $SIMPLE_NEURON_BALANCE
     neuron5_balance() if $NEURON5_BALANCE
     hybrid_esoinn_perc_balance() if $HYBRID_NEURON_BALANCE
+    esoinn_prediction_balance() if $ESOINN_PREDICTION_BALANCE
+    som_prediction_balance() if $SOM_PREDICTION_BALANCE
+    perc_prediction_balance() if $PERC_PREDICTION_BALANCE
     nil
   end
 
@@ -128,6 +135,27 @@ class Core
   def hybrid_esoinn_perc_balance()
     advice = Balancer.hybrid_esoinn_perc_balance(@llcrr_status)
     #puts advice #if advice > -1
+    return nil if advice == 0
+    create_transfer(advice)
+    nil
+  end
+
+  def esoinn_prediction_balance()
+    advice = Balancer.esoinn_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
+    return nil if advice == 0
+    create_transfer(advice)
+    nil
+  end
+
+  def som_prediction_balance()
+    advice = Balancer.som_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
+    return nil if advice == 0
+    create_transfer(advice)
+    nil
+  end
+
+  def perc_prediction_balance()
+    advice = Balancer.perc_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
     return nil if advice == 0
     create_transfer(advice)
     nil
@@ -262,7 +290,12 @@ class Core
 
   def llcrr_status_update()
     puts "llcrr_status_update" if $debug
+    last = @llcrr_status
     @llcrr_status = $comm.llcrr_status(@id)
+    unless(last == @llcrr_status)
+      @vector4_llcrr_status.push @llcrr_status
+      @vector4_llcrr_status.pop if @vector4_llcrr_status.size > 4
+    end
     nil
   end
 
