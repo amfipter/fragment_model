@@ -330,5 +330,22 @@ class Som_seq()
 end
 
 class Perc_seq()
-  nil
+  def initialize()
+    @perc_net = Ai4r::NeuralNetwork::Backpropagation.new(20, 10, 7, 10, 3)
+    @perc_set = nil
+  end
+
+  def train_all(train_set)
+    train_set.each do |train|
+      train_part = train[0..19]
+      answer = Util.load_state(train[20..24])
+      @perc_net.train(train_part, answer)
+    end
+    nil 
+  end
+
+  def predict_next_state(vector4)
+    out_raw = @perc_net.eval(vector4)
+    out_raw
+  end
 end

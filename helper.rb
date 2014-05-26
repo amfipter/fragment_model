@@ -24,4 +24,27 @@ module Util
     end
     out
   end
+
+  def self.load_state(llcrr_status)
+    out = [0.0, 0.0, 0.0]
+    if(llcrr_status[2] > $DIFFUSION_THRESHOLD)
+      out[2] = 1.0
+      return out
+    end
+
+    if(llcrr_status[1] > $DIFFUSION_THRESHOLD or llcrr_status[3] > $DIFFUSION_THRESHOLD)
+      out[2] = 0.5
+      out[1] = 0.5
+      return out
+    end
+
+    if(llcrr_status[0] > $DIFFUSION_THRESHOLD or llcrr_status[4] > $DIFFUSION_THRESHOLD)
+      out[1] = 1
+      return out
+    end
+
+    out[0] = 1
+    out
+  end
+
 end
