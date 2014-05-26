@@ -47,4 +47,37 @@ module Util
     out
   end
 
+  def self.serialization_save(data, file_name)
+    File.open(file_name, 'w') do |file|
+      Marshal.dump(data, file)
+    end
+  end
+
+  def self.serialization_load(file_name)
+    data = nil
+    if(File.exists?(file_name))
+      File.open(file_name) do |file|
+        data = Marshal.load(file)
+      end
+    end
+    data
+  end
+
+  def self.net_init()
+    if($net.nil?)
+      $net = Ai.create()
+      Ai.train($net)
+    end
+
+    if($net5.nil?)
+      $net5 = Ai.create5()
+      Ai.train5($net5, $profile.all_data, $profile.all_answer)
+    end
+
+    if($hybrid_net.nil?)
+      $hybrid_net = Ai.create_hybrid()
+      Ai.train_hybrid($hybrid_net, $profile.all_data, $profile.all_answer_s)
+    end
+  end
+
 end
