@@ -10,10 +10,31 @@ module Ai
     net
   end
 
+  def self.create_som_seq()
+    net = Som_seq.new($NUM_OF_NODES)
+    net
+  end
+
+  def self.create_perc_seq()
+    net = Perc_seq.new
+    net 
+  end
+
   def self.create_esoinn_seq()
     net = Esoinn_seq.new()
     net
   end
+
+  def self.train_perc_seq(net, train_set)
+    net.train_all(train_set)
+    nil
+  end
+
+  def self.train_som_seq(net, train_set)
+    net.train_all(train_set)
+    nil
+  end
+
 
   def self.train_esoinn_seq(net, train_set)
     net.train_all(train_set)

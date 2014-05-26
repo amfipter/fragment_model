@@ -37,19 +37,19 @@ $SOM_PREDICTION_BALANCE         =   false
 $PERC_PREDICTION_BALANCE        =   false
 
 #CORE CONFIG
-$TASK_PER_CORE 		            =    1
+$TASK_PER_CORE                  =    1
 $DISTANCE_KOEF_PER_CORE         =    10
-$DIFFUSION_THRESHOLD 	       	=    15
-$TASK_CAPACITY_PER_CORE       	=    30
-$FEED_REQEST_TIME 		        =    100
-$DIFFUSION_BALANCE_TIME        	=    100
-$NEURON_PERC_BALANCE_TIME     	=    100
-$TRANSFER_PACKAGE_CAPACITY    	=    1
-$LCR_STATUS_REQUEST_TIME      	=    100
-$LLCRR_STATUS_REQUEST_TIME    	=    100
-$CORE_TASK_BUFFER 			    =    1
-$MIN_TASK_DIFF			        =    100
-$MAX_TASK_DIFF	               	=    1000
+$DIFFUSION_THRESHOLD            =    15
+$TASK_CAPACITY_PER_CORE         =    30
+$FEED_REQEST_TIME               =    100
+$DIFFUSION_BALANCE_TIME         =    100
+$NEURON_PERC_BALANCE_TIME       =    100
+$TRANSFER_PACKAGE_CAPACITY      =    1
+$LCR_STATUS_REQUEST_TIME        =    100
+$LLCRR_STATUS_REQUEST_TIME      =    100
+$CORE_TASK_BUFFER               =    1
+$MIN_TASK_DIFF                  =    100
+$MAX_TASK_DIFF                  =    1000
 
 #PROFILE PARSE CONFIG
 $VECTOR_SEQ_SIZE = 5
@@ -83,7 +83,7 @@ $net5 = nil
 $hybrid_net = nil
 $esoinn_prediction_net = nil
 $som_prediction_net = nil
-$perc_prediction_net = nil 
+$perc_prediction_net = nil
 
 $profile = Profile.new if $READ_PROFILE
 
@@ -93,6 +93,9 @@ exit
 $net = Util.serialization_load($SIMPLE_PERC_SER_NAME)
 $net5 = Util.serialization_load($TEST_PERC_SER_NAME)
 $hybrid_net = Util.serialization_load($HYBRID_ESOINN_NET_SER_NAME)
+$esoinn_prediction_net = Util.serialization_load($ESOINN_PREDICTION_NET_SER_NAME)
+$som_prediction_net = Util.serialization_load($SOM_PREDICTION_NET_SER_NAME)
+$perc_prediction_net = Util.serialization_load($PERC_PREDICTION_NET_SER_NAME)
 
 $profile.create_answer_s() if $READ_PROFILE
 
@@ -110,4 +113,6 @@ puts "TOTAL TIME: #{$time}"
 Util.serialization_save($net, $SIMPLE_PERC_SER_NAME)
 Util.serialization_save($net5, $TEST_PERC_SER_NAME)
 Util.serialization_save($hybrid_net, $HYBRID_ESOINN_NET_SER_NAME)
-
+Util.serialization_save($esoinn_prediction_net, $ESOINN_PREDICTION_NET_SER_NAME)
+Util.serialization_save($som_prediction_net, $SOM_PREDICTION_NET_SER_NAME)
+Util.serialization_save($perc_prediction_net, $PERC_PREDICTION_NET_SER_NAME)

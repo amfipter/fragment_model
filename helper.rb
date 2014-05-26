@@ -68,6 +68,7 @@ module Util
   end
 
   def self.serialization_save(data, file_name)
+    return nil if data.nil?
     File.open(file_name, 'w') do |file|
       Marshal.dump(data, file)
     end
@@ -96,7 +97,31 @@ module Util
 
     if($hybrid_net.nil?)
       $hybrid_net = Ai.create_hybrid()
-      Ai.train_hybrid($hybrid_net, $profile.all_data, $profile.all_answer_s)
+      Ai.train_hybrid($hybrid_net,
+                      $profile.all_data,
+                      $profile.all_answer_s
+                      )
+    end
+
+    if($esoinn_prediction_net.nil?)
+      $esoinn_prediction_net = Ai.create_esoinn_seq()
+      Ai.train_esoinn_seq($esoinn_prediction_net,
+                          $profile.all_data_seq_s
+                          )
+    end
+
+    if($som_prediction_net.nil?)
+      $som_prediction_net = Ai.create_som_seq()
+      Ai.train_som_seq($som_prediction_net,
+                       $profile.all_data_seq_s
+                       )
+    end
+
+    if($perc_prediction_net.nil?)
+      $perc_prediction_net = Ai.create_perc_seq()
+      Ai.train_perc_seq($perc_prediction_net,
+                        $profile.all_data_seq_s
+                        )
     end
   end
 
