@@ -47,6 +47,26 @@ module Util
     out
   end
 
+  def self.predict_direction(llcrr_status)
+    left = Math.sqrt(
+      llcrr_status[0].to_f**2 +
+      llcrr_status[1].to_f**2 +
+      llcrr_status[2].to_f**2
+    )
+    center = Math.sqrt(
+      llcrr_status[1].to_f**2 +
+      llcrr_status[2].to_f**2 +
+      llcrr_status[3].to_f**2
+    )
+    right = Math.sqrt(
+      llcrr_status[2].to_f**2 +
+      llcrr_status[3].to_f**2 +
+      llcrr_status[4].to_f**2
+    )
+    out = Balancer_tools.simple_solution(left, center, right)
+    out
+  end
+
   def self.serialization_save(data, file_name)
     File.open(file_name, 'w') do |file|
       Marshal.dump(data, file)

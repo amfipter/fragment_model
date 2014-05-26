@@ -338,7 +338,7 @@ class Perc_seq()
   def train_all(train_set)
     train_set.each do |train|
       train_part = train[0..19]
-      answer = Util.load_state(train[20..24])
+      answer = Util.predict_direction(train[20..24])
       @perc_net.train(train_part, answer)
     end
     nil 
