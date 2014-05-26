@@ -269,18 +269,64 @@ class Esoinn_seq
     puts @clusters
   end
 
-  def predict_next(4vector)
-    nil
+  #warning!
+  def predict_next(vector4)
+    vector5 = vector4 + [0, 0, 0, 0, 0]
+    min = $int_max
+    min_arr = nil
+    @prototypes.each do |proto|
+      norm = Util.float_norm_vec5(vector5, proto[1])
+      if(norm < min)
+        min_arr = Array.new 
+        min = norm
+        min_arr.push proto[1]
+      elsif(norm == min)
+        min_arr.push proto[1]
+      end
+    end
+
+    if(min_arr.size > 1)
+      puts "too many similar vectors!".on_red.bold
+    end
+
+    target_v = min_arr.pop
+    out = target_v[-5..-1]
+    out
   end
 
-  def predict_next2(3vector)
+  def predict_next2(vector3)
+    vector5 = vector3 + [0, 0, 0, 0, 0] + [0, 0, 0, 0, 0]
     nil
   end
 
 end
 
 class Som_seq()
-  nil
+  def initialize(dim)
+    @som = Ai4r::Som::Som.new(dim, $NUM_OF_NODES, Ai4r::Som::TwoPhaseLayer.new($LAYER_NUM_OF_NODES))
+    @som.initiate_map()
+  end
+
+  def train_all(train_set)
+    puts "SOM TRAIN START".green
+    @som.train(train_set)
+    puts "SOM TRAIN COMPLETE".green
+    nil
+  end
+
+  def predict_next(vector4)
+    vector5 = vector4 + [0, 0, 0, 0, 0]
+    min = $int_max
+    t = @som.find_bmu(vector5)
+    target_v = t[0].weights
+    out = target_v[-5..-1]
+    out
+  end
+
+  def predict_next2(vector3)
+    vector5 = vector3 + [0, 0, 0, 0, 0] + [0, 0, 0, 0, 0]
+    nil
+  end
 end
 
 class Perc_seq()
