@@ -113,7 +113,7 @@ class Core
 
   def simple_neuron_balance()
     advice = Balancer.simple_neuron(@llcrr_status)
-    return nil if advice == 0
+    return nil if advice == 0 
     create_transfer(advice)
     nil
   end
@@ -127,6 +127,7 @@ class Core
 
   def hybrid_esoinn_perc_balance()
     advice = Balancer.hybrid_esoinn_perc_balance(@llcrr_status)
+    #puts advice #if advice > -1
     return nil if advice == 0
     create_transfer(advice)
     nil

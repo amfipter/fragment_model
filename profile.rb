@@ -1,5 +1,5 @@
 class Profile
-  attr_reader :all_data, :all_answer, :all_answer_s
+  attr_reader :all_data, :all_answer, :all_answer_s, :all_data_seq_s
   def initialize()
     return nil unless File.exists?("profile")
     file = File.open("profile", 'r')
@@ -13,14 +13,16 @@ class Profile
     @all_data = []
     @all_answer = []
     @all_answer_s = Array.new
+    @all_data_seq_s = Array.new
     parse_input()
     create_answer_d()
+    create_data_seq_s()
     #create_answer_s()
   end
 
   def parse_input()
     @raw_data[0].size.times do |i|
-      print "\rPARSE: #{i + 1}/#{@raw_data[0].size}".blue
+      print "\rPARSE: #{i + 1}/#{@raw_data[0].size}".green
       @data[i] = Array.new
       @raw_data.each do |el|
         j = i + @raw_data[0].size
@@ -36,7 +38,7 @@ class Profile
   end
 
   def create_answer_d()
-    puts __method__.to_s.blue
+    puts __method__.to_s.green
     i=1
     @all_data.each do |el|
       print "\r#{i}/#{@all_data.size}".blue
@@ -63,7 +65,7 @@ class Profile
     puts __method__.to_s.blue
     i=1
     @all_data.each do |el|
-      print "\r#{i}/#{@all_data.size}".blue
+      print "\r#{i}/#{@all_data.size}".green
       el.map! {|i| i.to_f}
       main_res = $net.eval(el[1..3])
       main = Balancer_tools.vector_extract(main_res)
@@ -92,13 +94,34 @@ class Profile
         end
       end
       if(rule[0] == 0 and rule[2] == 0)
-        rule[1] == 1
+        rule[1] = 1
       end
       @all_answer_s.push rule
+      # puts el.to_s 
+      # puts rule.to_s
       i += 1
     end
     puts ' '
   end
+
+  def create_data_seq_s(size = $VECTOR_SEQ_SIZE)
+    puts __method__.to_s.blue
+    i = 1
+    (size/2).upto(@all_data.size - size/2 - 1) do |k|
+      print "\r#{i}/#{@all_data.size - size}".green
+      v = []
+      size.times do |j|
+        v += all_data[k - size/2 + j]
+      end
+      @all_data_seq_s.push v 
+      #puts v.to_s
+      i += 1
+    end
+    #exit
+    nil
+  end
+
+
 
   def debug_print()
     @all_data.size.times do |i|

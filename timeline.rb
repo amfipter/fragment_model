@@ -24,6 +24,7 @@ class Timeline
   def size()
     @time.size
   end
+  
 
   #get nearest task and remove it from task queue
   def get_task!()

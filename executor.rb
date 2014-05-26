@@ -17,7 +17,7 @@ class Executor
     @cores.each {|core| core.init()}
     while(true) do 
       #cores_debug_print()
-      print "\r#{$task_count-$feed.size}/#{$task_count}"
+      print "\r#{$task_count-$feed.size}/#{$task_count}".green
       nearest = $int_max
       target_core = nil
       @cores.each do |core|
@@ -78,9 +78,9 @@ class Executor
       all_task = 0
       @cores.each do |core|
         all_task += core.count
-        puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}"
+        puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}".light_blue
       end
-      puts "ALL TASK: #{all_task}"
+      puts "ALL TASK: #{all_task}".blue
     end
 
     def check_cores_state_simple()

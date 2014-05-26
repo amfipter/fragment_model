@@ -52,11 +52,13 @@ class Balancer
   end
 
   def self.hybrid_esoinn_perc_balance(llcrr_status)
+    #puts llcrr_status.to_s
     out_res = $hybrid_net.eval(llcrr_status)
+    #puts out_res.to_s
     res = Balancer_tools.vector_extract(out_res)
     out = -1 if res[0] == 1
     out = 0 if res[1] == 1
-    out = 2 if res[2] == 1
+    out = 1 if res[2] == 1
     out
   end
 end
