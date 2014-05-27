@@ -13,7 +13,7 @@ class Executor
 
   def start()
     #puts $feed.task?
-    puts "executor"
+    puts "executor".upcase.red
     @cores.each {|core| core.init()}
     while(true) do 
       #cores_debug_print()
@@ -42,7 +42,7 @@ class Executor
       capture_profile()
       #sleep 1/5
     end
-    puts "\r#{$task_count}/#{$task_count}"
+    puts "\r#{$task_count}/#{$task_count}".red
     write_profile() if $WRITE_PROFILE
     nil
   end

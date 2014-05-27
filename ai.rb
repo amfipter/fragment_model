@@ -11,13 +11,13 @@ module Ai
   end
 
   def self.create_som_seq()
-    net = Som_seq.new($NUM_OF_NODES)
+    net = Som_seq.new(25)
     net
   end
 
   def self.create_perc_seq()
     net = Perc_seq.new
-    net 
+    net
   end
 
   def self.create_esoinn_seq()
@@ -147,6 +147,7 @@ class Hybrid_som_net
   end
 
   def train_all(train_set, answer)
+    puts train_set.to_s
     puts "SOM TRAIN START".green
     @som.train(train_set)
     puts "SOM TRAIN COMPLETE".green
@@ -274,31 +275,36 @@ class Esoinn_seq
   end
 
   def train_all(train_set)
+    train_set.shuffle!
     @esoinn.first_init(train_set.pop, train_set.pop)
+    puts "TRAIN ESOINN_SEQ".blue
     i = 1
     train_set.each do |train|
-      print "\r#{i}/#{train_set.size}"
+      print "\r#{i}/#{train_set.size}".green
       #puts train.to_s
       @esoinn.new_data(train)
       i += 1
     end
     puts "\nESOINN TRAIN COMPLETE"
     @clusters, @prototypes = @esoinn.classify()
-    @prototypes.each do |p|
-      puts p.to_s
-    end
-    puts @clusters
+    # @prototypes.each do |p|
+    #   puts p.to_s
+    # end
+    puts "ESOINN CLUSTERS: #{@clusters}".red
   end
 
   #warning!
   def predict_next(vector4)
-    vector5 = vector4 + [0, 0, 0, 0, 0]
+    vector5 = vector4[0] + vector4[1] + vector4[2] + vector4[3] + [0, 0, 0, 0, 0]
     min = $int_max
     min_arr = nil
     @prototypes.each do |proto|
+      # puts proto[1].to_s
+      # puts vector5.to_s
       norm = Util.float_norm_vec5(vector5, proto[1])
+      #norm = Util.norm2(vector5, proto[1])
       if(norm < min)
-        min_arr = Array.new 
+        min_arr = Array.new
         min = norm
         min_arr.push proto[1]
       elsif(norm == min)
@@ -322,13 +328,16 @@ class Esoinn_seq
 
 end
 
-class Som_seq()
+class Som_seq
   def initialize(dim)
     @som = Ai4r::Som::Som.new(dim, $NUM_OF_NODES, Ai4r::Som::TwoPhaseLayer.new($LAYER_NUM_OF_NODES))
     @som.initiate_map()
   end
 
   def train_all(train_set)
+    # puts train_set[0].to_s
+    # puts train_set[-1].to_s
+    train_set.shuffle!
     puts "SOM TRAIN START".green
     @som.train(train_set)
     puts "SOM TRAIN COMPLETE".green
@@ -336,7 +345,7 @@ class Som_seq()
   end
 
   def predict_next(vector4)
-    vector5 = vector4 + [0, 0, 0, 0, 0]
+    vector5 = vector4[0] + vector4[1] + vector4[2] + vector4[3] + [0, 0, 0, 0, 0]
     min = $int_max
     t = @som.find_bmu(vector5)
     target_v = t[0].weights
@@ -350,23 +359,40 @@ class Som_seq()
   end
 end
 
-class Perc_seq()
+class Perc_seq
   def initialize()
-    @perc_net = Ai4r::NeuralNetwork::Backpropagation.new(20, 10, 7, 10, 3)
+    @perc_net = Ai4r::NeuralNetwork::Backpropagation.new([20, 10, 5, 3])
     @perc_set = nil
   end
 
   def train_all(train_set)
-    train_set.each do |train|
-      train_part = train[0..19]
-      answer = Util.predict_direction(train[20..24])
-      @perc_net.train(train_part, answer)
+    puts "TRAIN PERC_SEQ".blue
+    train_set.shuffle!
+    l = 0
+    c = 0
+    r = 0
+    5.times do
+      train_set.each do |train|
+        train_part = train[0..19]
+        answer_d = Util.load_state(train[20..24])
+        answer = [0, 0, 0]
+        answer[answer_d + 1] = 1
+        l += 1 if answer[0] == 1
+        c += 1 if answer[1] == 1
+        r += 1 if answer[2] == 1
+        #puts train[20..24].to_s + ' ' + answer.to_s
+        @perc_net.train(train_part, answer)
+      end
     end
-    nil 
+    puts ''
+    puts l
+    puts c
+    puts r
+    nil
   end
 
   def predict_next_state(vector4)
-    out_raw = @perc_net.eval(vector4)
+    out_raw = @perc_net.eval(vector4[0] + vector4[1] + vector4[2] + vector4[3])
     out_raw
   end
 end

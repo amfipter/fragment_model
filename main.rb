@@ -24,16 +24,16 @@ $int_max = 2**64
 $debug = nil
 
 #PROFILE CONFIG
-$WRITE_PROFILE                  =   false
+$WRITE_PROFILE                  =   true
 $READ_PROFILE                   =   true
 
 #BALANCE CONFIG
 $DIFFUSION_BALANCE              =   false
 $SIMPLE_NEURON_BALANCE          =   false
 $NEURON5_BALANCE                =   false
-$HYBRID_NEURON_BALANCE          =   true
+$HYBRID_NEURON_BALANCE          =   false
 $ESOINN_PREDICTION_BALANCE      =   false
-$SOM_PREDICTION_BALANCE         =   false
+$SOM_PREDICTION_BALANCE         =   true
 $PERC_PREDICTION_BALANCE        =   false
 
 #CORE CONFIG
@@ -66,7 +66,7 @@ $c2 = 1.0
 
 #SOM CONFIG
 $NUM_OF_NODES = 4
-$LAYER_NUM_OF_NODES = 25
+$LAYER_NUM_OF_NODES = 25 *2
 
 #MISC CONFIG
 $SIMPLE_PERC_SER_NAME = "net_ser"
@@ -87,8 +87,8 @@ $perc_prediction_net = nil
 
 $profile = Profile.new if $READ_PROFILE
 
-Ai.train_esoinn_seq(Ai.create_esoinn_seq(), $profile.all_data_seq_s)
-exit
+# Ai.train_esoinn_seq(Ai.create_esoinn_seq(), $profile.all_data_seq_s)
+# exit
 
 $net = Util.serialization_load($SIMPLE_PERC_SER_NAME)
 $net5 = Util.serialization_load($TEST_PERC_SER_NAME)

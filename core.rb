@@ -56,7 +56,7 @@ class Core
 
   def create_transfer(target_diff)
     package = Array.new
-    $TRANSFER_PACKAGE_CAPACITY.times do 
+    $TRANSFER_PACKAGE_CAPACITY.times do
       t = @tasks.pop
       package.push t unless t.nil?
     end
@@ -120,7 +120,7 @@ class Core
 
   def simple_neuron_balance()
     advice = Balancer.simple_neuron(@llcrr_status)
-    return nil if advice == 0 
+    return nil if advice == 0
     create_transfer(advice)
     nil
   end
@@ -141,22 +141,24 @@ class Core
   end
 
   def esoinn_prediction_balance()
-    advice = Balancer.esoinn_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
-    return nil if advice == 0
+    if (@vector4_llcrr_status.size == 4)
+      advice, @predict = Balancer.esoinn_prediction_balance(@vector4_llcrr_status)
+    end
+    return nil if advice == 0 or advice.nil?
     create_transfer(advice)
     nil
   end
 
   def som_prediction_balance()
-    advice = Balancer.som_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
-    return nil if advice == 0
+    advice, @predict = Balancer.som_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
+    return nil if advice == 0 or advice.nil?
     create_transfer(advice)
     nil
   end
 
   def perc_prediction_balance()
     advice = Balancer.perc_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
-    return nil if advice == 0
+    return nil if advice == 0 or advice.nil?
     create_transfer(advice)
     nil
   end
@@ -174,7 +176,7 @@ class Core
     puts "exec" if $debug
     if(time_to_start_job?())
       puts "start job" if $debug
-      case $time 
+      case $time
       when @transfer_timeline.get_time()
         exec_transfer()
       when @service_timeline.get_time()
@@ -292,10 +294,18 @@ class Core
     puts "llcrr_status_update" if $debug
     last = @llcrr_status
     @llcrr_status = $comm.llcrr_status(@id)
+    unless(@predict.nil?)
+      puts @predict.to_s
+      puts last.to_s
+      puts @llcrr_status.to_s
+      puts @vector4_llcrr_status.to_s
+      @predict = nil
+    end
     unless(last == @llcrr_status)
       @vector4_llcrr_status.push @llcrr_status
       @vector4_llcrr_status.pop if @vector4_llcrr_status.size > 4
     end
+
     nil
   end
 

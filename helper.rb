@@ -11,8 +11,9 @@ module Util
   def self.norm_i(v1, v2, i)
     out = 0.0
     v1.size.times do |j|
-      out += (v1[j] - v2[j])**i
+      out += (v1[j] - v2[j]).abs**i
     end
+    # puts out
     out = Math.sqrt(out)
     out
   end
@@ -63,6 +64,10 @@ module Util
       llcrr_status[3].to_f**2 +
       llcrr_status[4].to_f**2
     )
+
+    return 0 if llcrr_status[2] < $DIFFUSION_THRESHOLD
+    return 0 if(llcrr_status[2] <= llcrr_status[1] and
+                llcrr_status[2] <= llcrr_status[3])
     out = Balancer_tools.simple_solution(left, center, right)
     out
   end
@@ -95,13 +100,13 @@ module Util
       Ai.train5($net5, $profile.all_data, $profile.all_answer)
     end
 
-    if($hybrid_net.nil?)
-      $hybrid_net = Ai.create_hybrid()
-      Ai.train_hybrid($hybrid_net,
-                      $profile.all_data,
-                      $profile.all_answer_s
-                      )
-    end
+    # if($hybrid_net.nil?)
+    #   $hybrid_net = Ai.create_hybrid()
+    #   Ai.train_hybrid($hybrid_net,
+    #                   $profile.all_data,
+    #                   $profile.all_answer_s
+    #                   )
+    # end
 
     if($esoinn_prediction_net.nil?)
       $esoinn_prediction_net = Ai.create_esoinn_seq()
