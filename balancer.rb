@@ -66,24 +66,34 @@ class Balancer
     predict_llcrr_status = $esoinn_prediction_net.predict_next(vector4_llcrr_status)
     # puts predict_llcrr_status.to_s
     # puts vector4_llcrr_status[-1].to_s
-    left = Math.sqrt(
-      predict_llcrr_status[0].to_f**2 +
-      predict_llcrr_status[1].to_f**2 +
-      predict_llcrr_status[2].to_f**2
-    )
-    center = Math.sqrt(
-      predict_llcrr_status[1].to_f**2 +
-      predict_llcrr_status[2].to_f**2 +
-      predict_llcrr_status[3].to_f**2
-    )
-    right = Math.sqrt(
-      predict_llcrr_status[2].to_f**2 +
-      predict_llcrr_status[3].to_f**2 +
-      predict_llcrr_status[4].to_f**2
-    )
-    out = Balancer_tools.simple_solution(left, center, right)
+    # left = Math.sqrt(
+    #   predict_llcrr_status[0].to_f**2 +
+    #   predict_llcrr_status[1].to_f**2 +
+    #   predict_llcrr_status[2].to_f**2
+    # )
+    # center = Math.sqrt(
+    #   predict_llcrr_status[1].to_f**2 +
+    #   predict_llcrr_status[2].to_f**2 +
+    #   predict_llcrr_status[3].to_f**2
+    # )
+    # right = Math.sqrt(
+    #   predict_llcrr_status[2].to_f**2 +
+    #   predict_llcrr_status[3].to_f**2 +
+    #   predict_llcrr_status[4].to_f**2
+    # )
+    # out = Balancer_tools.simple_solution(left, center, right)
     #puts "== " + out.to_s
-    return out, predict_llcrr_status
+    # return out #, predict_llcrr_status
+    return 0 if predict_llcrr_status[2] < $DIFFUSION_THRESHOLD
+    return 0 if predict_llcrr_status[1] >= predict_llcrr_status[2] and predict_llcrr_status[3] >= predict_llcrr_status[2]
+    return 1 if predict_llcrr_status[1] >= predict_llcrr_status[2] and predict_llcrr_status[3] < predict_llcrr_status[2]
+    return -1 if predict_llcrr_status[1] < predict_llcrr_status[2] and predict_llcrr_status[3] >= predict_llcrr_status[2]
+    if(predict_llcrr_status[1] > predict_llcrr_status[3])
+      return 1
+    else
+      return -1
+    end
+    0
   end
 
   def self.som_prediction_balance(vector4_llcrr_status)
@@ -133,10 +143,17 @@ class Balancer
 
   def self.hybrid_prediction_next_balance(vector4_llcrr_status, llcrr_status)
     main_advice = Balancer.simple_neuron(llcrr_status)
-    if(main_advice == 0)
+    if(main_advice == 0 and vector4_llcrr_status.size == 4)
+      # puts 'f'
       main_advice = Balancer.esoinn_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_ESOINN
       main_advice = Balancer.som_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_SOM
       main_advice = Balancer.perc_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_PERC
+
+      # main_advice = Balancer.simple_neuron($esoinn_prediction_net.predict_next(vector4_llcrr_status)) if $HYBRID_PREDICTION_ESOINN
+      # main_advice = Balancer.simple_neuron($som_prediction_net.predict_next(vector4_llcrr_status)) if $HYBRID_PREDICTION_SOM
+
+      
+      #main_advice = Balancer.simple_neuron($perc_prediction_net.predict_next(vector4_llcrr_status)) if $HYBRID_PREDICTION_PERC
     end
     main_advice
   end

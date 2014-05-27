@@ -105,7 +105,7 @@ class Core
     esoinn_prediction_balance() if $ESOINN_PREDICTION_BALANCE
     som_prediction_balance() if $SOM_PREDICTION_BALANCE
     perc_prediction_balance() if $PERC_PREDICTION_BALANCE
-    hybrid_prediction_balance() if HYBRID_PREDICTION_BALANCE
+    hybrid_prediction_balance() if $HYBRID_PREDICTION_BALANCE
     nil
   end
 
@@ -166,7 +166,7 @@ class Core
   end
 
   def hybrid_prediction_balance()
-    advice = Balancer.hybrid_prediction_next_balance(vector4_llcrr_status, llcrr_status)
+    advice = Balancer.hybrid_prediction_next_balance(@vector4_llcrr_status, @llcrr_status)
     return nil if advice == 0 or advice.nil?
     create_transfer(advice)
     nil

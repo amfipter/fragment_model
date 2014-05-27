@@ -90,10 +90,6 @@ module Util
   end
 
   def self.net_init()
-    if($net.nil?)
-      $net = Ai.create()
-      Ai.train($net)
-    end
 
     if($net5.nil?)
       $net5 = Ai.create5()
@@ -127,6 +123,13 @@ module Util
       Ai.train_perc_seq($perc_prediction_net,
                         $profile.all_data_seq_s
                         )
+    end
+  end
+
+  def self.net_init_simple_perc()
+    if($net.nil?)
+      $net = Ai.create()
+      Ai.train($net)
     end
   end
 

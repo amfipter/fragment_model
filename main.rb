@@ -24,18 +24,18 @@ $int_max = 2**64
 $debug = nil
 
 #PROFILE CONFIG
-$WRITE_PROFILE                  =   true
-$READ_PROFILE                   =   true
+$WRITE_PROFILE                  =   false
+$READ_PROFILE                   =   false
 
 #BALANCE CONFIG
-$DIFFUSION_BALANCE              =   false
-$SIMPLE_NEURON_BALANCE          =   true
+$DIFFUSION_BALANCE              =   true
+$SIMPLE_NEURON_BALANCE          =   false
 $NEURON5_BALANCE                =   false
 $HYBRID_NEURON_BALANCE          =   false
 $ESOINN_PREDICTION_BALANCE      =   false
 $SOM_PREDICTION_BALANCE         =   false
 $PERC_PREDICTION_BALANCE        =   false
-$HYBRID_PREDICTION_BALANCE      =   false
+$HYBRID_PREDICTION_BALANCE      =   true
 
 #HYBRID_PREDICTION CONFIG
 $HYBRID_PREDICTION_PERC         =   false
@@ -54,8 +54,8 @@ $TRANSFER_PACKAGE_CAPACITY      =    1
 $LCR_STATUS_REQUEST_TIME        =    100
 $LLCRR_STATUS_REQUEST_TIME      =    100
 $CORE_TASK_BUFFER               =    1
-$MIN_TASK_DIFF                  =    100
-$MAX_TASK_DIFF                  =    1000
+$MIN_TASK_DIFF                  =    1000
+$MAX_TASK_DIFF                  =    10000
 
 #PROFILE PARSE CONFIG
 $VECTOR_SEQ_SIZE = 5
@@ -65,14 +65,14 @@ $MAX_INT = 2**64
 $MAX_AGE = 100
 $N = 0
 $K = 0
-$lambda = 10
+$lambda = 50
 $mark = 0
 $c1 = 0.0001
-$c2 = 1.0
+$c2 = 10.0
 
 #SOM CONFIG
-$NUM_OF_NODES = 4
-$LAYER_NUM_OF_NODES = 25 *2
+$NUM_OF_NODES = 5
+$LAYER_NUM_OF_NODES = 25
 
 #MISC CONFIG
 $SIMPLE_PERC_SER_NAME = "net_ser"
@@ -103,6 +103,8 @@ $esoinn_prediction_net = Util.serialization_load($ESOINN_PREDICTION_NET_SER_NAME
 $som_prediction_net = Util.serialization_load($SOM_PREDICTION_NET_SER_NAME)
 $perc_prediction_net = Util.serialization_load($PERC_PREDICTION_NET_SER_NAME)
 
+Util.net_init_simple_perc()
+
 $profile.create_answer_s() if $READ_PROFILE
 
 Util.net_init()
@@ -115,6 +117,8 @@ executor.start
 executor.print_result_simple()
 
 puts "TOTAL TIME: #{$time}"
+puts $esoinn_prediction_net.i1
+puts $esoinn_prediction_net.i2
 
 Util.serialization_save($net, $SIMPLE_PERC_SER_NAME)
 Util.serialization_save($net5, $TEST_PERC_SER_NAME)

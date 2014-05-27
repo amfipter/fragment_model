@@ -268,10 +268,13 @@ class Hybrid_esoinn_net
 end
 
 class Esoinn_seq
+  attr_reader :i1, :i2
   def initialize()
     @esoinn = ESOINN.new
     @prototypes = nil
     @clusters = nil
+    @i1 = 0
+    @i2 = 0
   end
 
   def train_all(train_set)
@@ -298,11 +301,12 @@ class Esoinn_seq
     vector5 = vector4[0] + vector4[1] + vector4[2] + vector4[3] + [0, 0, 0, 0, 0]
     min = $int_max
     min_arr = nil
+
     @prototypes.each do |proto|
       # puts proto[1].to_s
       # puts vector5.to_s
-      norm = Util.float_norm_vec5(vector5, proto[1])
-      #norm = Util.norm2(vector5, proto[1])
+      # norm = Util.float_norm_vec5(vector5, proto[1])
+      norm = Util.norm2(vector5, proto[1])
       if(norm < min)
         min_arr = Array.new
         min = norm
@@ -313,7 +317,10 @@ class Esoinn_seq
     end
 
     if(min_arr.size > 1)
+      @i1 += 1
       puts "too many similar vectors!".on_red.bold
+    else
+      @i2 += 1
     end
 
     target_v = min_arr.pop
@@ -374,7 +381,8 @@ class Perc_seq
     5.times do
       train_set.each do |train|
         train_part = train[0..19]
-        answer_d = Util.load_state(train[20..24])
+        #answer = Util.load_state(train[20..24])
+        answer_d = Util.predict_direction(train[20..24])
         answer = [0, 0, 0]
         answer[answer_d + 1] = 1
         l += 1 if answer[0] == 1
