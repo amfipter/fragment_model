@@ -29,12 +29,18 @@ $READ_PROFILE                   =   true
 
 #BALANCE CONFIG
 $DIFFUSION_BALANCE              =   false
-$SIMPLE_NEURON_BALANCE          =   false
+$SIMPLE_NEURON_BALANCE          =   true
 $NEURON5_BALANCE                =   false
 $HYBRID_NEURON_BALANCE          =   false
 $ESOINN_PREDICTION_BALANCE      =   false
-$SOM_PREDICTION_BALANCE         =   true
+$SOM_PREDICTION_BALANCE         =   false
 $PERC_PREDICTION_BALANCE        =   false
+$HYBRID_PREDICTION_BALANCE      =   false
+
+#HYBRID_PREDICTION CONFIG
+$HYBRID_PREDICTION_PERC         =   false
+$HYBRID_PREDICTION_ESOINN       =   false
+$HYBRID_PREDICTION_SOM          =   false
 
 #CORE CONFIG
 $TASK_PER_CORE                  =    1

@@ -92,6 +92,7 @@ class Core
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $ESOINN_PREDICTION_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $SOM_PREDICTION_BALANCE
     task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $PERC_PREDICTION_BALANCE
+    task = Method_task.new($NEURON_PERC_BALANCE_TIME, "balance") if $HYBRID_PREDICTION_BALANCE
     task
   end
 
@@ -104,6 +105,7 @@ class Core
     esoinn_prediction_balance() if $ESOINN_PREDICTION_BALANCE
     som_prediction_balance() if $SOM_PREDICTION_BALANCE
     perc_prediction_balance() if $PERC_PREDICTION_BALANCE
+    hybrid_prediction_balance() if HYBRID_PREDICTION_BALANCE
     nil
   end
 
@@ -158,6 +160,13 @@ class Core
 
   def perc_prediction_balance()
     advice = Balancer.perc_prediction_balance(@vector4_llcrr_status) if @vector4_llcrr_status.size == 4
+    return nil if advice == 0 or advice.nil?
+    create_transfer(advice)
+    nil
+  end
+
+  def hybrid_prediction_balance()
+    advice = Balancer.hybrid_prediction_next_balance(vector4_llcrr_status, llcrr_status)
     return nil if advice == 0 or advice.nil?
     create_transfer(advice)
     nil

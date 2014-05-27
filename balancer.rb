@@ -130,6 +130,17 @@ class Balancer
 
     nil
   end
+
+  def self.hybrid_prediction_next_balance(vector4_llcrr_status, llcrr_status)
+    main_advice = Balancer.simple_neuron(llcrr_status)
+    if(main_advice == 0)
+      main_advice = Balancer.esoinn_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_ESOINN
+      main_advice = Balancer.som_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_SOM
+      main_advice = Balancer.perc_prediction_balance(vector4_llcrr_status) if $HYBRID_PREDICTION_PERC
+    end
+    main_advice
+  end
+
 end
 
 
