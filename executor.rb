@@ -28,7 +28,7 @@ class Executor
         end
       end
       if(nearest == $int_max)
-        return nil
+        # return nil
       end
       #puts "#{$time} #{nearest}"
       $time = nearest
@@ -36,9 +36,14 @@ class Executor
       work = false
       @cores.each {|core| work = true unless core.empty?()}
       work = true if $feed.size > 0
-      break unless work
-      $comm.update()
+      unless(work)
+        # c = 0
+        # @cores.each {|core| c += core.count}
+        # puts c
+        break
 
+      end
+      $comm.update()
       capture_profile()
       #sleep 1/5
     end
@@ -78,7 +83,8 @@ class Executor
       all_task = 0
       @cores.each do |core|
         all_task += core.count
-        puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}".light_blue
+        #puts "ID: #{core.id}     TIME:#{core.log_time} COUNT:#{core.count}".light_blue
+        puts core.count 
       end
       puts "ALL TASK: #{all_task}".blue
     end

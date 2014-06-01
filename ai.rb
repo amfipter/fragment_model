@@ -285,6 +285,11 @@ class Esoinn_seq
     train_set.each do |train|
       print "\r#{i}/#{train_set.size}".green
       #puts train.to_s
+      4.times do |j|
+        5.times do |k|
+          train[j*5 + k] *= (j+1)
+        end
+      end
       @esoinn.new_data(train)
       i += 1
     end
@@ -299,6 +304,11 @@ class Esoinn_seq
   #warning!
   def predict_next(vector4)
     vector5 = vector4[0] + vector4[1] + vector4[2] + vector4[3] + [0, 0, 0, 0, 0]
+    4.times do |j|
+      5.times do |k|
+        vector5[j*5 + k] *= (j+1)
+      end
+    end
     min = $int_max
     min_arr = nil
 
@@ -344,6 +354,13 @@ class Som_seq
   def train_all(train_set)
     # puts train_set[0].to_s
     # puts train_set[-1].to_s
+    train_set.each do |train|
+      4.times do |j|
+        5.times do |k|
+          train[j*5 + k] *= (j+1)
+        end
+      end
+    end
     train_set.shuffle!
     puts "SOM TRAIN START".green
     @som.train(train_set)
@@ -353,6 +370,11 @@ class Som_seq
 
   def predict_next(vector4)
     vector5 = vector4[0] + vector4[1] + vector4[2] + vector4[3] + [0, 0, 0, 0, 0]
+    4.times do |j|
+      5.times do |k|
+        vector5[j*5 + k] *= (j+1)
+      end
+    end
     min = $int_max
     t = @som.find_bmu(vector5)
     target_v = t[0].weights
@@ -392,10 +414,10 @@ class Perc_seq
         @perc_net.train(train_part, answer)
       end
     end
-    puts ''
-    puts l
-    puts c
-    puts r
+    # puts ''
+    # puts l
+    # puts c
+    # puts r
     nil
   end
 

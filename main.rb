@@ -28,7 +28,7 @@ $WRITE_PROFILE                  =   false
 $READ_PROFILE                   =   false
 
 #BALANCE CONFIG
-$DIFFUSION_BALANCE              =   true
+$DIFFUSION_BALANCE              =   false
 $SIMPLE_NEURON_BALANCE          =   false
 $NEURON5_BALANCE                =   false
 $HYBRID_NEURON_BALANCE          =   false
@@ -40,7 +40,7 @@ $HYBRID_PREDICTION_BALANCE      =   true
 #HYBRID_PREDICTION CONFIG
 $HYBRID_PREDICTION_PERC         =   false
 $HYBRID_PREDICTION_ESOINN       =   false
-$HYBRID_PREDICTION_SOM          =   false
+$HYBRID_PREDICTION_SOM          =   true
 
 #CORE CONFIG
 $TASK_PER_CORE                  =    1
@@ -108,6 +108,11 @@ Util.net_init_simple_perc()
 $profile.create_answer_s() if $READ_PROFILE
 
 Util.net_init()
+
+executor = nil
+Signal.trap("TSTP") do
+  executor.print_result_simple
+end
 
 
 executor = Executor.new($cores_count, $task_count)
