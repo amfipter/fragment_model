@@ -113,7 +113,7 @@ class Core
     advice = Balancer.diffusion_simple(@lcr_status)
     #puts advice
     #puts @lcr_status.to_s
-    return nil unless @lcr_new
+    #return nil unless @lcr_new
     return nil if advice == 0
     create_transfer(advice)
     @lcr_new = false

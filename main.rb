@@ -25,7 +25,7 @@ $debug = nil
 
 #PROFILE CONFIG
 $WRITE_PROFILE                  =   false
-$READ_PROFILE                   =   false
+$READ_PROFILE                   =   true
 
 #BALANCE CONFIG
 $DIFFUSION_BALANCE              =   false
@@ -40,22 +40,22 @@ $HYBRID_PREDICTION_BALANCE      =   true
 #HYBRID_PREDICTION CONFIG
 $HYBRID_PREDICTION_PERC         =   false
 $HYBRID_PREDICTION_ESOINN       =   false
-$HYBRID_PREDICTION_SOM          =   true
+$HYBRID_PREDICTION_SOM          =   false
 
 #CORE CONFIG
 $TASK_PER_CORE                  =    1
 $DISTANCE_KOEF_PER_CORE         =    10
-$DIFFUSION_THRESHOLD            =    15
+$DIFFUSION_THRESHOLD            =    5
 $TASK_CAPACITY_PER_CORE         =    30
-$FEED_REQEST_TIME               =    100
-$DIFFUSION_BALANCE_TIME         =    100
-$NEURON_PERC_BALANCE_TIME       =    100
-$TRANSFER_PACKAGE_CAPACITY      =    1
-$LCR_STATUS_REQUEST_TIME        =    100
-$LLCRR_STATUS_REQUEST_TIME      =    100
+$FEED_REQEST_TIME               =    1250#10
+$DIFFUSION_BALANCE_TIME         =    1250#4000
+$NEURON_PERC_BALANCE_TIME       =    1250#4000
+$TRANSFER_PACKAGE_CAPACITY      =    2
+$LCR_STATUS_REQUEST_TIME        =    1250#10
+$LLCRR_STATUS_REQUEST_TIME      =    1250#10
 $CORE_TASK_BUFFER               =    1
-$MIN_TASK_DIFF                  =    1000
-$MAX_TASK_DIFF                  =    10000
+$MIN_TASK_DIFF                  =    10000
+$MAX_TASK_DIFF                  =    50000
 
 #PROFILE PARSE CONFIG
 $VECTOR_SEQ_SIZE = 5
@@ -67,8 +67,8 @@ $N = 0
 $K = 0
 $lambda = 50
 $mark = 0
-$c1 = 0.0001
-$c2 = 10.0
+$c1 = 0.001
+$c2 = 1.0
 
 #SOM CONFIG
 $NUM_OF_NODES = 5

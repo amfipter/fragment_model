@@ -128,7 +128,7 @@ module Simple_ai_tool
 
     if(input_data[1] > $DIFFUSION_THRESHOLD)
       output_data[2] = 1
-    elsif (input_data[0] > $DIFFUSION_THRESHOLD or input_data[2] > $DIFFUSION_THRESHOLD)
+    elsif (input_data[0] > $DIFFUSION_THRESHOLD - 2 or input_data[2] > $DIFFUSION_THRESHOLD - 2)
       output_data[1] = 1
     else
       output_data[0] = 1
